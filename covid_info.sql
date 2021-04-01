@@ -1,16 +1,16 @@
 -- -- creating table 
 
--- CREATE TABLE covid_data (
---     country_name VARCHAR2(100),
---     total_cases NUMBER(15),
---     total_deaths NUMBER(15),
---     total_recovered NUMBER(15),
---     total_serious NUMBER(15)
--- );
+CREATE TABLE covid_data (
+    country_name VARCHAR2(100),
+    total_cases NUMBER(15),
+    total_deaths NUMBER(15),
+    total_recovered NUMBER(15),
+    total_serious NUMBER(15)
+);
 
--- SELECT * FROM covid_data;
--- SELECT COUNT(*) FROM covid_data;
--- DESC covid_data;
+SELECT * FROM covid_data;
+SELECT COUNT(*) FROM covid_data;
+DESC covid_data;
 
 -- INSERT INTO covid_data(country_name, total_cases, total_deaths, total_recovered, total_serious) VALUES('USA', 30922914, 562069, 23348808, 8592);
 -- INSERT INTO covid_data(country_name, total_cases, total_deaths, total_recovered, total_serious) VALUES('Brazil', 12490362, 310694, 10879627, 8318);
@@ -234,143 +234,143 @@
 -- INSERT INTO covid_data(country_name, total_cases, total_deaths, total_recovered, total_serious) VALUES('Vanuatu', 3, 0, 1, 0);
 -- INSERT INTO covid_data(country_name, total_cases, total_deaths, total_recovered, total_serious) VALUES('Micronesia', 1, 0, 1, 0);
 
--- -- finding total number of cases
--- CREATE OR REPLACE FUNCTION TOTAL_CASES_FUN
--- RETURN NUMBER
--- IS
---     l_total_cases NUMBER(25);
--- BEGIN
---     SELECT SUM(cd.total_cases)
---     INTO l_total_cases
---     FROM covid_data cd;
---     RETURN l_total_cases;
--- END;
--- /
+-- finding total number of cases
+CREATE OR REPLACE FUNCTION TOTAL_CASES_FUN
+RETURN NUMBER
+IS
+    l_total_cases NUMBER(25);
+BEGIN
+    SELECT SUM(cd.total_cases)
+    INTO l_total_cases
+    FROM covid_data cd;
+    RETURN l_total_cases;
+END;
+/
 
--- -- finding total number of deaths
--- CREATE OR REPLACE FUNCTION TOTAL_DEATHS_FUN
--- RETURN NUMBER
--- IS
---     l_total_deaths NUMBER(25);
--- BEGIN
---     SELECT SUM(cd.total_deaths)
---     INTO l_total_deaths
---     FROM covid_data cd;
---     RETURN l_total_deaths;
--- END;
--- /
+-- finding total number of deaths
+CREATE OR REPLACE FUNCTION TOTAL_DEATHS_FUN
+RETURN NUMBER
+IS
+    l_total_deaths NUMBER(25);
+BEGIN
+    SELECT SUM(cd.total_deaths)
+    INTO l_total_deaths
+    FROM covid_data cd;
+    RETURN l_total_deaths;
+END;
+/
 
--- -- finding total number of recovered
--- CREATE OR REPLACE FUNCTION TOTAL_RECOVERED_FUN
--- RETURN NUMBER
--- IS
---     l_total_recovered NUMBER(25);
--- BEGIN
---     SELECT SUM(cd.total_recovered)
---     INTO l_total_recovered
---     FROM covid_data cd;
---     RETURN l_total_recovered;
--- END;
--- /
+-- finding total number of recovered
+CREATE OR REPLACE FUNCTION TOTAL_RECOVERED_FUN
+RETURN NUMBER
+IS
+    l_total_recovered NUMBER(25);
+BEGIN
+    SELECT SUM(cd.total_recovered)
+    INTO l_total_recovered
+    FROM covid_data cd;
+    RETURN l_total_recovered;
+END;
+/
 
--- -- finding total number of active cases
--- CREATE OR REPLACE FUNCTION TOTAL_ACTIVE_FUN
--- (
---     p_total_cases NUMBER, 
---     p_total_deaths NUMBER,
---     p_total_recovered NUMBER
--- )
--- RETURN NUMBER
--- IS
---     l_total_active NUMBER(25);
--- BEGIN
---     l_total_active := (p_total_cases - p_total_deaths - p_total_recovered);
---     RETURN l_total_active;
--- END;
--- /
+-- finding total number of active cases
+CREATE OR REPLACE FUNCTION TOTAL_ACTIVE_FUN
+(
+    p_total_cases NUMBER, 
+    p_total_deaths NUMBER,
+    p_total_recovered NUMBER
+)
+RETURN NUMBER
+IS
+    l_total_active NUMBER(25);
+BEGIN
+    l_total_active := (p_total_cases - p_total_deaths - p_total_recovered);
+    RETURN l_total_active;
+END;
+/
 
--- -- finding the total number of closed cases
--- CREATE OR REPLACE FUNCTION TOTAL_CLOSED_FUN
--- (
---     p_total_deaths NUMBER,
---     p_total_recovered NUMBER
--- )
--- RETURN NUMBER
--- IS
---     l_total_closed NUMBER(25);
--- BEGIN
---     l_total_closed := (p_total_deaths + p_total_recovered);
---     RETURN l_total_closed;
--- END;
--- /
+-- finding the total number of closed cases
+CREATE OR REPLACE FUNCTION TOTAL_CLOSED_FUN
+(
+    p_total_deaths NUMBER,
+    p_total_recovered NUMBER
+)
+RETURN NUMBER
+IS
+    l_total_closed NUMBER(25);
+BEGIN
+    l_total_closed := (p_total_deaths + p_total_recovered);
+    RETURN l_total_closed;
+END;
+/
 
--- SELECT
---     TOTAL_CASES_FUN() g_total_cases,
---     TOTAL_DEATHS_FUN() g_total_deaths,
---     TOTAL_RECOVERED_FUN() g_total_recovered,
---     TOTAL_ACTIVE_FUN(TOTAL_CASES_FUN(),TOTAL_DEATHS_FUN(),TOTAL_RECOVERED_FUN()) g_total_active,
---     TOTAL_CLOSED_FUN(TOTAL_DEATHS_FUN(),TOTAL_RECOVERED_FUN()) g_total_closed
--- FROM dual;
+SELECT
+    TOTAL_CASES_FUN() g_total_cases,
+    TOTAL_DEATHS_FUN() g_total_deaths,
+    TOTAL_RECOVERED_FUN() g_total_recovered,
+    TOTAL_ACTIVE_FUN(TOTAL_CASES_FUN(),TOTAL_DEATHS_FUN(),TOTAL_RECOVERED_FUN()) g_total_active,
+    TOTAL_CLOSED_FUN(TOTAL_DEATHS_FUN(),TOTAL_RECOVERED_FUN()) g_total_closed
+FROM dual;
 
--- CREATE OR REPLACE FUNCTION TOTAL_SERIOUS_FUN
--- RETURN NUMBER
--- IS
---     l_total_serious NUMBER(25);
--- BEGIN
---     SELECT SUM(cd.total_serious)
---     INTO l_total_serious
---     FROM covid_data cd;
---     RETURN l_total_serious;
--- END;
--- /
+CREATE OR REPLACE FUNCTION TOTAL_SERIOUS_FUN
+RETURN NUMBER
+IS
+    l_total_serious NUMBER(25);
+BEGIN
+    SELECT SUM(cd.total_serious)
+    INTO l_total_serious
+    FROM covid_data cd;
+    RETURN l_total_serious;
+END;
+/
 
--- CREATE OR REPLACE FUNCTION TOTAL_MILDCON_FUN
--- RETURN NUMBER
--- IS
---     l_total_mildcondition NUMBER(25);
--- BEGIN
---     SELECT 
---         TOTAL_ACTIVE_FUN(TOTAL_CASES_FUN(),TOTAL_DEATHS_FUN(),TOTAL_RECOVERED_FUN()) - (TOTAL_SERIOUS_FUN())
---     INTO l_total_mildcondition    
---     FROM dual;
---     RETURN l_total_mildcondition;
--- END;
--- /
-
-
--- CREATE OR REPLACE VIEW vw_active_cases
--- AS
---     SELECT 
---         TOTAL_ACTIVE_FUN(TOTAL_CASES_FUN(),TOTAL_DEATHS_FUN(),TOTAL_RECOVERED_FUN()) ACTIVE_CASES,
---         TOTAL_SERIOUS_FUN() SERIOUS,
---         TOTAL_MILDCON_FUN() MILD_CONDITION,
---         ROUND((TOTAL_SERIOUS_FUN()/TOTAL_ACTIVE_FUN(TOTAL_CASES_FUN(),TOTAL_DEATHS_FUN(),TOTAL_RECOVERED_FUN()) * 100),2) "% SERIOUS",
---         ROUND((100-(TOTAL_SERIOUS_FUN()/TOTAL_ACTIVE_FUN(TOTAL_CASES_FUN(),TOTAL_DEATHS_FUN(),TOTAL_RECOVERED_FUN()) * 100)),2) "% MILD"
---     FROM 
---         dual;
+CREATE OR REPLACE FUNCTION TOTAL_MILDCON_FUN
+RETURN NUMBER
+IS
+    l_total_mildcondition NUMBER(25);
+BEGIN
+    SELECT 
+        TOTAL_ACTIVE_FUN(TOTAL_CASES_FUN(),TOTAL_DEATHS_FUN(),TOTAL_RECOVERED_FUN()) - (TOTAL_SERIOUS_FUN())
+    INTO l_total_mildcondition    
+    FROM dual;
+    RETURN l_total_mildcondition;
+END;
+/
 
 
--- SELECT * FROM vw_active_cases;
+CREATE OR REPLACE VIEW vw_active_cases
+AS
+    SELECT 
+        TOTAL_ACTIVE_FUN(TOTAL_CASES_FUN(),TOTAL_DEATHS_FUN(),TOTAL_RECOVERED_FUN()) ACTIVE_CASES,
+        TOTAL_SERIOUS_FUN() SERIOUS,
+        TOTAL_MILDCON_FUN() MILD_CONDITION,
+        ROUND((TOTAL_SERIOUS_FUN()/TOTAL_ACTIVE_FUN(TOTAL_CASES_FUN(),TOTAL_DEATHS_FUN(),TOTAL_RECOVERED_FUN()) * 100),2) "% SERIOUS",
+        ROUND((100-(TOTAL_SERIOUS_FUN()/TOTAL_ACTIVE_FUN(TOTAL_CASES_FUN(),TOTAL_DEATHS_FUN(),TOTAL_RECOVERED_FUN()) * 100)),2) "% MILD"
+    FROM 
+        dual;
 
--- CREATE OR REPLACE VIEW vw_top_countries
--- AS
---     SELECT 
---         ROW_NUMBER() OVER(ORDER BY cd.total_cases DESC) "id", cd.country_name, cd.total_cases
---     FROM 
---         covid_data cd
---     FETCH NEXT 20 ROWS ONLY;
+
+SELECT * FROM vw_active_cases;
+
+CREATE OR REPLACE VIEW vw_top_countries
+AS
+    SELECT 
+        ROW_NUMBER() OVER(ORDER BY cd.total_cases DESC) "id", cd.country_name, cd.total_cases
+    FROM 
+        covid_data cd
+    FETCH NEXT 20 ROWS ONLY;
     
 
--- CREATE OR REPLACE VIEW vw_bottom_countries
--- AS
---     SELECT 
---         ROW_NUMBER() OVER(ORDER BY cd.total_cases ASC) "id", cd.country_name, cd.total_cases
---     FROM 
---         covid_data cd
---     FETCH NEXT 20 ROWS ONLY;
+CREATE OR REPLACE VIEW vw_bottom_countries
+AS
+    SELECT 
+        ROW_NUMBER() OVER(ORDER BY cd.total_cases ASC) "id", cd.country_name, cd.total_cases
+    FROM 
+        covid_data cd
+    FETCH NEXT 20 ROWS ONLY;
 
--- SELECT * FROM vw_top_countries;   
--- SELECT * FROM vw_bottom_countries;
+SELECT * FROM vw_top_countries;   
+SELECT * FROM vw_bottom_countries;
         
         
 -- SELECT * 
@@ -379,18 +379,18 @@
 -- SELECT *
 -- FROM vw_bottom_countries;
 
--- CREATE OR REPLACE VIEW vw_closed_cases
--- AS
---     SELECT 
---         TOTAL_CLOSED_FUN(TOTAL_DEATHS_FUN(),TOTAL_RECOVERED_FUN()) "TOTAL CLOSED",
---         TOTAL_DEATHS_FUN() "DEATHS",
---         TOTAL_RECOVERED_FUN() "RECOVERED",
---         ROUND(((TOTAL_DEATHS_FUN()/TOTAL_CLOSED_FUN(TOTAL_DEATHS_FUN(),TOTAL_RECOVERED_FUN())) * 100),2) "% DEATH",
---         ROUND((100-((TOTAL_DEATHS_FUN()/TOTAL_CLOSED_FUN(TOTAL_DEATHS_FUN(),TOTAL_RECOVERED_FUN())) * 100)),2) "% RECOVERED"
---     FROM dual;
+CREATE OR REPLACE VIEW vw_closed_cases
+AS
+    SELECT 
+        TOTAL_CLOSED_FUN(TOTAL_DEATHS_FUN(),TOTAL_RECOVERED_FUN()) "TOTAL CLOSED",
+        TOTAL_DEATHS_FUN() "DEATHS",
+        TOTAL_RECOVERED_FUN() "RECOVERED",
+        ROUND(((TOTAL_DEATHS_FUN()/TOTAL_CLOSED_FUN(TOTAL_DEATHS_FUN(),TOTAL_RECOVERED_FUN())) * 100),2) "% DEATH",
+        ROUND((100-((TOTAL_DEATHS_FUN()/TOTAL_CLOSED_FUN(TOTAL_DEATHS_FUN(),TOTAL_RECOVERED_FUN())) * 100)),2) "% RECOVERED"
+    FROM dual;
     
--- SELECT *
--- FROM vw_closed_cases;
+SELECT *
+FROM vw_closed_cases;
 
 
 -- country_name, total_cases, total_deaths, total_recovered, total_serious
@@ -439,3 +439,157 @@ with open('data.csv','r') as file:
             INSERT_SQL = f"""{INSERT} VALUES('{row[0]}', {str(numeric_row).strip('[]')});\n"""
             sqlfile.write(INSERT_SQL)
             
+
+-- -- finding position
+-- CREATE OR REPLACE FUNCTION FIND_POSITION_FUNC
+-- (
+--     l_country_name VARCHAR2
+-- )
+-- RETURN NUMBER
+-- IS
+--     l_position NUMBER(5);
+-- BEGIN
+--     SELECT 
+--         country_rank.country_position INTO l_position
+--     FROM 
+--     (
+--         SELECT cd.country_name c_name, DENSE_RANK() OVER(ORDER BY cd.total_cases DESC) country_position
+--         FROM covid_data cd
+--     ) country_rank
+--     WHERE UPPER(country_rank.c_name) = UPPER(l_country_name);
+-- END;
+-- / 
+SELECT COUNT(*) FROM covid_data;
+
+-- finding position
+CREATE OR REPLACE FUNCTION FIND_POSITION_FUNC
+(
+    l_country_name VARCHAR2
+)
+RETURN NUMBER
+IS
+    l_position NUMBER(5);
+BEGIN
+    SELECT 
+        country_rank.country_position INTO l_position
+    FROM 
+    (
+        SELECT cd.country_name c_name, DENSE_RANK() OVER(ORDER BY cd.total_cases DESC) country_position
+        FROM covid_data cd
+    ) country_rank
+    WHERE UPPER(country_rank.c_name) = UPPER(l_country_name);
+END;
+/ 
+
+CREATE TABLE new_covid_data
+(
+    country_name VARCHAR2(100),
+    new_cases NUMBER(15),
+    new_deaths NUMBER(15)
+);
+
+-- finding position
+CREATE OR REPLACE PROCEDURE FIND_POSITION_PRC
+(
+    l_country_name IN OUT VARCHAR2,
+    l_total_cases OUT NUMBER,
+    l_position OUT NUMBER
+)
+IS
+BEGIN
+    SELECT 
+        country_rank.t_cases,country_rank.country_position 
+        INTO l_total_cases, l_position
+    FROM 
+    (
+        SELECT 
+            cd.country_name c_name,
+            cd.total_cases t_cases,
+            DENSE_RANK() OVER(ORDER BY cd.total_cases DESC) country_position
+        FROM 
+            covid_data cd
+    ) country_rank
+    WHERE UPPER(country_rank.c_name) = UPPER(l_country_name);
+END;
+/ 
+---------------------------
+wtf
+-- finding position
+CREATE OR REPLACE PROCEDURE FIND_POSITION_PRC
+(
+    l_country_name IN OUT VARCHAR2,
+    l_total_cases OUT NUMBER,
+    l_position OUT NUMBER
+)
+IS
+BEGIN
+    SELECT 
+        country_rank.t_cases,country_rank.country_position 
+        INTO l_total_cases, l_position
+    FROM 
+    (
+        SELECT 
+            cd.country_name c_name,
+            cd.total_cases t_cases,
+            DENSE_RANK() OVER(ORDER BY cd.total_cases DESC) country_position
+        FROM 
+            covid_data cd
+    ) country_rank
+    WHERE UPPER(country_rank.c_name) = UPPER(l_country_name);
+END;
+/ 
+
+
+CREATE OR REPLACE VIEW vw_country_record
+AS
+    
+DECLARE
+    con_name VARCHAR(100);
+    tot_cases NUMBER(25);
+    pos_con NUMBER(5);
+BEGIN
+    con_name:='usa';
+    FIND_POSITION_PRC(con_name,tot_cases,pos_con);
+    DBMS_OUTPUT.PUT_LINE(con_name||' '||tot_cases||' '||pos_con);
+END;
+/
+
+SELECT * FROM vw_active_cases;
+
+CREATE OR REPLACE VIEW vw_top_countries
+AS
+    SELECT 
+        ROW_NUMBER() OVER(ORDER BY cd.total_cases DESC) "id", cd.country_name, cd.total_cases
+    FROM 
+        covid_data cd
+    FETCH NEXT 20 ROWS ONLY;
+    
+
+CREATE OR REPLACE VIEW vw_bottom_countries
+AS
+    SELECT 
+        ROW_NUMBER() OVER(ORDER BY cd.total_cases ASC) "id", cd.country_name, cd.total_cases
+    FROM 
+        covid_data cd
+    FETCH NEXT 20 ROWS ONLY;
+
+SELECT * FROM vw_top_countries;   
+SELECT * FROM vw_bottom_countries;
+-- CREATE OR REPLACE VIEW vw_country_position
+-- AS
+--     select 
+--     9 sn, 
+--     'position: '||sn||' - '||country_name txt 
+--     from 
+--     (select 
+--         rownum sn, 
+--         country_name, 
+--         total_cases 
+--     from 
+--         covid_data 
+--         order by total_cases desc
+--     ) 
+--     where country_name='Nepal'
+
+-- SELECT * FROM vw_country_position;
+
